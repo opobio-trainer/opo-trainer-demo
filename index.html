@@ -2312,61 +2312,37 @@ if (btnRepetirGrupo) {
 const WEBHOOK_URL = "https://hook.eu2.make.com/vo6arhz02wv50gqvpxhoingqxuwv3lxv";
 
 if (formSugerencias) {
-  formSugerencias.addEventListener('submit', async (e) => {
+  formSugerencias.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const nombre  = formSugerencias.elements['sug-nombre'].value.trim();
     const email   = formSugerencias.elements['sug-email'].value.trim();
     const mensaje = formSugerencias.elements['sug-mensaje'].value.trim();
 
-    if (!nombre) {
-      alert('Por favor, indica tu nombre.');
-      return;
-    }
-
-    if (!email) {
-      alert('Por favor, indica tu email.');
-      return;
-    }
-
-    // Validación muy simple de email
-    if (!email.includes('@') || !email.includes('.')) {
-      alert('Por favor, introduce un email válido.');
-      return;
-    }
-
-    if (!mensaje) {
-      alert('Por favor, escribe tu sugerencia.');
-      return;
-    }
+    if (!nombre) { alert('Por favor, indica tu nombre.'); return; }
+    if (!email)  { alert('Por favor, indica tu email.'); return; }
+    if (!email.includes('@') || !email.includes('.')) { alert('Por favor, introduce un email válido.'); return; }
+    if (!mensaje) { alert('Por favor, escribe tu sugerencia.'); return; }
 
     const payload = {
       nombre,
       email,
       mensaje,
-      origen: 'DEMO'
+      origen: 'DEMO',
+      url: location.href,
+      when: new Date().toISOString()
     };
 
-    try {
-      const res = await fetch(WEBHOOK_URL, {{
-  method: "POST",
-  mode: "no-cors",
-  headers: { "Content-Type": "text/plain;charset=UTF-8" },
-  body: JSON.stringify({
-    tipo: "sugerencia",
-    texto: (texto || "").trim(),
-    url: location.href,
-    when: new Date().toISOString()
-  })
-});
+    // IMPORTANTE: no usamos await, no miramos res.status (en no-cors sería 0)
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(payload)
+    }).catch((err) => console.error('Error enviando sugerencia DEMO:', err));
 
-      console.log('Respuesta webhook DEMO:', res.status);
-      alert('✅ ¡Gracias! Tu sugerencia se ha enviado correctamente.');
-      formSugerencias.reset();
-    } catch (err) {
-      console.error('Error enviando sugerencia DEMO:', err);
-      alert('❌ Ha habido un problema técnico al enviar la sugerencia. Inténtalo de nuevo más tarde.');
-    }
+    alert('✅ ¡Gracias! Tu sugerencia se ha enviado.');
+    formSugerencias.reset();
   });
 }
 
