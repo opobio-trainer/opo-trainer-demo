@@ -2309,39 +2309,38 @@ if (btnRepetirGrupo) {
       }
     }
 // --- Formulario de sugerencias (DEMO → Make) ---
-const WEBHOOK_URL = "https://hook.eu2.make.com/vo6arhz02wv50gqvpxhoingqxuwv3lxv";
+const WEBHOOK_URL = "https://hook.eu2.make.com/vo6arhz02wv50gqvpxhoingqxuwv3lxv"; // <-- tu webhook DEMO
 
 if (formSugerencias) {
-  formSugerencias.addEventListener('submit', (e) => {
+  formSugerencias.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const nombre  = formSugerencias.elements['sug-nombre'].value.trim();
-    const email   = formSugerencias.elements['sug-email'].value.trim();
-    const mensaje = formSugerencias.elements['sug-mensaje'].value.trim();
+    const nombre  = formSugerencias.elements["sug-nombre"].value.trim();
+    const email   = formSugerencias.elements["sug-email"].value.trim();
+    const mensaje = formSugerencias.elements["sug-mensaje"].value.trim();
 
-    if (!nombre) { alert('Por favor, indica tu nombre.'); return; }
-    if (!email)  { alert('Por favor, indica tu email.'); return; }
-    if (!email.includes('@') || !email.includes('.')) { alert('Por favor, introduce un email válido.'); return; }
-    if (!mensaje) { alert('Por favor, escribe tu sugerencia.'); return; }
+    if (!nombre) return alert("Por favor, indica tu nombre.");
+    if (!email)  return alert("Por favor, indica tu email.");
+    if (!email.includes("@") || !email.includes(".")) return alert("Por favor, introduce un email válido.");
+    if (!mensaje) return alert("Por favor, escribe tu sugerencia.");
 
-    const payload = {
+    const data = new URLSearchParams({
       nombre,
       email,
       mensaje,
-      origen: 'DEMO',
+      origen: "DEMO",
       url: location.href,
       when: new Date().toISOString()
-    };
+    });
 
-    // IMPORTANTE: no usamos await, no miramos res.status (en no-cors sería 0)
     fetch(WEBHOOK_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify(payload)
-    }).catch((err) => console.error('Error enviando sugerencia DEMO:', err));
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: data.toString()
+    });
 
-    alert('✅ ¡Gracias! Tu sugerencia se ha enviado.');
+    alert("✅ ¡Gracias! Tu sugerencia se ha enviado.");
     formSugerencias.reset();
   });
 }
